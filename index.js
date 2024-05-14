@@ -9,7 +9,7 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // Importar rutas
-const usersRoute = require('./routes/users');
+const usersRoute = require('./src/routes/userRoutes.js');
 
 // Usar rutas
 app.use('/api/users', usersRoute);
