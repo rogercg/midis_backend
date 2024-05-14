@@ -1,18 +1,31 @@
 const express = require('express');
-const mongoose = require('mongoose');
-const userRoutes = require('./src/routes/userRoutes'); // Importa las rutas de usuario
 const app = express();
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+const cors = require('cors');
 
-mongoose.connect('mongodb+srv://rogercg:BggXtcVs50JJElwH@glassclock.7brslve.mongodb.net/midis', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-}).then(() => console.log('Conectado a MongoDB'))
-  .catch(err => console.error('Error al conectar a MongoDB', err));
+// Middlewares
+app.use(cors());
+app.use(bodyParser.json());
 
-app.use(express.json());
-app.use('/api/users', userRoutes); // Monta las rutas de usuario en la ruta base
+// Importar rutas
+const usersRoute = require('./routes/users');
 
-const PORT = 3000;
+// Usar rutas
+app.use('/api/users', usersRoute);
+
+// Ruta de inicio
+app.get('/', (req, res) => {
+    res.send('Servidor corriendo');
+});
+
+// Conectar a MongoDB
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/midis', { useNewUrlParser: true, useUnifiedTopology: true }, () => {
+    console.log('Conectado a MongoDB');
+});
+
+// Iniciar el servidor en el puerto proporcionado por Heroku
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Servidor corriendo en http://localhost:${PORT}`);
+    console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
